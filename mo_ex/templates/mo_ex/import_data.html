@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Импорт данных</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'mo_ex/css/styles.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Импорт данных </h1>
+        <h3>из api Московской Биржи в БД приложения</h3>
+        <form id="importForm" method="post">
+            {% csrf_token %}
+            <button type="submit">Загрузить данные</button>
+        </form>
+        <div id="responseMessage"></div>
+    </div>
+
+    <script>
+        document.getElementById('importForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            fetch("{% url 'import_data' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('responseMessage').innerText = data.message;
+                })
+                .catch(err => {
+                    console.error(err);
+                    document.getElementById('responseMessage').innerText = "Ошибка загрузки данных.";
+                });
+        });
+    </script>
+</body>
+</html>
+

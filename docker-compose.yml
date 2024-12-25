@@ -1,0 +1,17 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:15.3
+    environment:
+      POSTGRES_DB: ${PG_DATABASE}
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_HOST: ${PG_HOST}
+    ports:
+      - "${PG_PORT}:${PG_PORT}"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+    hostname: postgres
+volumes:
+  pgdata:
