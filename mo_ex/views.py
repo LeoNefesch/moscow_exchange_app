@@ -11,11 +11,13 @@ from .utils import load_data
 
 
 class SecurityViewSet(viewsets.ModelViewSet):
+    """View для работы с информацией о ценных бумагах"""
     queryset = Security.objects.all().order_by("secid")
     serializer_class = SecuritySerializer
 
 
 class HistoryViewSet(viewsets.ModelViewSet):
+    """View для работы с историей торгов за произвольную дату"""
     queryset = History.objects.all()
     serializer_class = HistorySerializer
 
@@ -33,7 +35,7 @@ class SummaryDataAPIView(APIView):
 
 
 class DataImportView(View):
-    """Представление для загрузки данных из внешнего источника."""
+    """View для загрузки данных из внешнего источника."""
     def get(self, request):
         return render(request, "mo_ex/import_data.html")
 

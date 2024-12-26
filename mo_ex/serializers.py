@@ -4,12 +4,14 @@ from .models import Security, History
 
 
 class SecuritySerializer(serializers.ModelSerializer):
+    """Сериализатор для работы с информацией о ценных бумагах"""
     class Meta:
         model = Security
         fields = '__all__'
 
 
 class HistorySerializer(serializers.ModelSerializer):
+    """Сериализатор для работы с историей торгов за произвольную дату"""
     secid = serializers.PrimaryKeyRelatedField(queryset=Security.objects.all())
 
     class Meta:

@@ -8,14 +8,14 @@ HISTORY_URL = config('HISTORY_URL')
 
 
 def fetch_data(url):
-    """Загружает данные из указанного URL."""
+    """Функция для загрузки данных из указанного URL."""
     response = requests.get(url)
     response.raise_for_status()
     return response.json()
 
 
 def load_data():
-    """Загружает данные в таблицы Security и History."""
+    """Функция для загрузки данных в таблицы Security и History."""
     securities_data = fetch_data(SECURITIES_URL)
     history_data = fetch_data(HISTORY_URL)
 
