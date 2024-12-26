@@ -1,7 +1,11 @@
 from django.http import JsonResponse
 from django.shortcuts import render
+from django.utils.dateparse import parse_date
+from django.utils.timezone import now
 from django.views import View
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, status
+from rest_framework.exceptions import ValidationError
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -24,12 +28,26 @@ class HistoryViewSet(viewsets.ModelViewSet):
 
 class SummaryDataAPIView(APIView):
     """View для получения сводных данных о ценных бумагах и истории торгов за произвольную дату.
-    Параметр для GET-запроса - дата, например \"2024-12-23\""""
-    def get(self, request, tradedate):
+    Пример запроса:
+    `http://127.0.0.1:8000/api/summary-data/?date=2024-12-23`"""
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(name='date',
+                             description='Дата в формате ГГГГ-ММ-ДД',
+                             required=False, type=str)
+        ],
+        responses=SummaryDataSerializer(many=True))
+    def get(self, request, *args, **kwargs):
+        query_date = request.query_params.get('date')
+        tradedate = parse_date(query_date) if query_date else now().date()
+        if not tradedate:
+            raise ValidationError({
+                'detail': 'Неверный формат даты. Ожидается ГГГГ-ММ-ДД.'})
         history_records = History.objects.filter(tradedate=tradedate).select_related('secid')
 
         if not history_records.exists():
-            return Response({"detail": "No records found for the given date."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"detail": "В БД нет записей на указанную дату."}, status=status.HTTP_404_NOT_FOUND)
         serializer = SummaryDataSerializer(history_records, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

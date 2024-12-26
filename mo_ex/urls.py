@@ -9,6 +9,6 @@ router.register(r'histories', HistoryViewSet)
 
 urlpatterns = [
     path('api/', include(router.urls)),
-    path('api/summary-data/<str:tradedate>/', SummaryDataAPIView.as_view(), name='summary-data'),
+    path('api/summary-data/', SummaryDataAPIView.as_view(), name='summary-data'),
     path('', DataImportView.as_view(), name='import_data'),
 ]
